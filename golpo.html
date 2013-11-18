@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Bootstrap, from Twitter</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Le styles -->
+        <link href="assets/css/bootstrap.css" rel="stylesheet">
+        <style>
+            body {
+                padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+            }
+        </style>
+        <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="brand" href="#">Project name</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <form method="post" action="create_golpo.php">
+
+                <div class="span5">
+
+                </div>
+                <div class="span5">
+                    <div class="span5 "><h3>Module Name</h3></div>
+                    <div class="span4"><input type="text" name="module_name" /></div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="span9">
+                    <table id="tbl" class="table">
+                        <tr>
+                            <td>Data Field Name:</td>
+                            <td>Type  </td>
+                            <td>Length  </td>
+                            <td>Input Type  </td>
+                            <td>Required  </td>
+                        <tr>
+                        <tr class="odd" id="scratch">    
+                            <td align="center">
+                                <input type="text" value="" size="10" title="Column" class="textfield" maxlength="64" name="field_name[]" id="field_0_1">
+                            </td>
+                            <td align="center">
+                                <select id="field_0_2" name="field_type[]" class="column_type">
+                                    <option>INT</option>
+                                    <option>VARCHAR</option>
+                                    <option>TEXT</option>
+                                    <option>DATE</option>
+                                    <optgroup label="NUMERIC">
+                                        <option>TINYINT</option>
+                                        <option>SMALLINT</option>
+                                        <option>MEDIUMINT</option>
+                                        <option>INT</option>
+                                        <option>BIGINT</option>
+                                        <option disabled="disabled">-</option>
+                                        <option>DECIMAL</option>
+                                        <option>FLOAT</option>
+                                        <option>DOUBLE</option>
+                                        <option>REAL</option>
+                                        <option disabled="disabled">-</option>
+                                        <option>BIT</option>
+                                        <option>BOOLEAN</option>
+                                        <option>SERIAL</option>
+                                    </optgroup>
+                                    <optgroup label="DATE and TIME">
+                                        <option>DATE</option>
+                                        <option>DATETIME</option>
+                                        <option>TIMESTAMP</option>
+                                        <option>TIME</option>
+                                        <option>YEAR</option>
+                                    </optgroup>
+                                    <optgroup label="STRING">
+                                        <option>CHAR</option>
+                                        <option>VARCHAR</option>
+                                        <option disabled="disabled">-</option>
+                                        <option>TINYTEXT</option>
+                                        <option>TEXT</option>
+                                        <option>MEDIUMTEXT</option>
+                                        <option>LONGTEXT</option>
+                                        <option disabled="disabled">-</option>
+                                        <option>BINARY</option>
+                                        <option>VARBINARY</option>
+                                        <option disabled="disabled">-</option>
+                                        <option>TINYBLOB</option>
+                                        <option>MEDIUMBLOB</option>
+                                        <option>BLOB</option>
+                                        <option>LONGBLOB</option>
+                                        <option disabled="disabled">-</option>
+                                        <option>ENUM</option>
+                                        <option>SET</option>
+                                    </optgroup>
+                                    <optgroup label="SPATIAL">
+                                        <option>GEOMETRY</option>
+                                        <option>POINT</option>
+                                        <option>LINESTRING</option>
+                                        <option>POLYGON</option>
+                                        <option>MULTIPOINT</option>
+                                        <option>MULTILINESTRING</option>
+                                        <option>MULTIPOLYGON</option>
+                                        <option>GEOMETRYCOLLECTION</option>
+                                    </optgroup>    
+                                </select>
+                            </td>
+                            <td align="center"><input type="text" class="textfield input-small" value="" size="8" name="field_length[]" id="field_0_3"></td>
+                            <td>
+                                <select name="input_type[]">
+                                    <optgroup label="input">
+                                        <option>checkbox</option>
+                                        <option>button</option>
+                                        <option>color</option>
+                                        <option>date</option>
+                                        <option>datetime</option>
+                                        <option>datetime-local</option>
+                                        <option>email</option>
+                                        <option>file</option>
+                                        <option>hidden</option>
+                                        <option>image</option>
+                                        <option>month</option>
+                                        <option>number</option>
+                                        <option>password</option>
+                                        <option>radio</option>
+                                        <option>range</option>
+                                        <option>reset</option>
+                                        <option>search</option>
+                                        <option>submit</option>
+                                        <option>tel</option>
+                                        <option>text</option>
+                                        <option>time</option>
+                                        <option>url</option>
+                                        <option>week</option>
+                                    </optgroup>
+                                        <option>textarea</option>
+                                        <option>select</option>
+                                        <option>select</option>
+                                   
+                                </select>
+                            </td>
+                            <td><input type="checkbox" name="required[]"><td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="clearfix"></div>
+                <div class="span8">
+                    <input type="button" class="btn btn-success" value="Add More Field" onclick="add_more();"/>
+                    <input type="submit" class="btn btn-primary" value="Create New Nodule" onclick="return create();"/>
+                </div>
+            </form>
+
+        </div> <!-- /container -->
+
+        <!-- Le javascript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="assets/js/jquery.js"></script>
+        <script src="assets/js/bootstrap-transition.js"></script>
+        <script src="assets/js/bootstrap-alert.js"></script>
+        <script src="assets/js/bootstrap-modal.js"></script>
+        <script src="assets/js/bootstrap-dropdown.js"></script>
+        <script src="assets/js/bootstrap-scrollspy.js"></script>
+        <script src="assets/js/bootstrap-tab.js"></script>
+        <script src="assets/js/bootstrap-tooltip.js"></script>
+        <script src="assets/js/bootstrap-popover.js"></script>
+        <script src="assets/js/bootstrap-button.js"></script>
+        <script src="assets/js/bootstrap-collapse.js"></script>
+        <script src="assets/js/bootstrap-carousel.js"></script>
+        <script src="assets/js/bootstrap-typeahead.js"></script>
+        <script type="text/javascript">
+            function add_more(){
+                $("#tbl").append($("#scratch").clone());
+            }
+
+            function create(){}
+        </script>
+
+    </body>
+</html>
