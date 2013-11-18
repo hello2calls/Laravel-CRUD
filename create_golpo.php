@@ -287,13 +287,13 @@ echo $<?php echo $module_name; ?>s->links();
 &#60;div class="alert alert-error"&#62;{{ $errors->first('<?php echo $_POST['field_name'][$key];?>') }}&#60;/div&#62;
 @endif
 <?php   if($value == 'text'){ ?>  
-{{Form::text('<?php echo $_POST['field_name'][$key];?>', 'Initial Value')}}
+{{Form::text('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>'))}}
 <?php } ?> 
 <?php   if($value == 'textarea'){ ?>  
-{{ Form::textarea('<?php echo $_POST['field_name'][$key];?>', ' ',array('class' => 'span12','cols'=>'5','rows'=>'28')) }} 
+{{ Form::textarea('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>'),array('class' => 'span12','cols'=>'5','rows'=>'28')) }} 
 <?php } ?>
 <?php   if($value == 'select'){ ?>  
-{{Form::select('<?php echo $_POST['field_name'][$key];?>', array(0 => 'Option 1', 1 => 'Option 2', 2 => 'Option 3', 3 => 'Option 4'), 1, array('class' => 'styled'))}} 
+{{Form::select('<?php echo $_POST['field_name'][$key];?>', array(0 => 'Option 1', 1 => 'Option 2', 2 => 'Option 3', 3 => 'Option 4'), Input::old('<?php echo $_POST['field_name'][$key];?>'), array('class' => 'styled'))}} 
 <?php } ?>
 
 
