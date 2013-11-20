@@ -52,7 +52,7 @@
                 <?php
                 $module_name = $_POST['module_name'];
                 $data = $_POST['field_name'];
-                $sql = ' CREATE TABLE  ' . $module_name . '( <br>';
+                $sql = ' CREATE TABLE  ' . $module_name . 's( <br>';
                 $sql .= "\tid INT(11) NOT NULL AUTO_INCREMENT, <br>"; 
                 $fields = array();
 				$field_keys=array();
@@ -70,132 +70,113 @@
                 $sql .= implode($fields, ', <br>');
                 $sql .= "<br>\tcreated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, <br>"; 
                 $sql .= "\tupdated_at timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', <br>";
-                $sql .=  "\tPRIMARY KEY (`id`) <br>";
+                $sql .=  "\tPRIMARY KEY (id) <br>";
                 $sql .= ')ENGINE=InnoDB DEFAULT CHARSET=utf8;';
                 ?>
                 <div class="bs-docs-example">
+				MySql
 <pre><?php echo $sql; ?></code></pre>
-                </div>
+                </div>				
                 
             </div>
             <div class="span9">
                 <div class="bs-docs-example">
-<pre>
+				Model
+<pre><code data-language="php">
 class <?php echo ucfirst($module_name); ?> extends Eloquent {
 
-protected $table = '<?php echo $module_name; ?>s';
+	protected $table = '<?php echo $module_name; ?>s';
 
 }
-</code></pre>
-                </div>
-            </div>
-            <div class="span9">
-                <?php
-                $module_name = $_POST['module_name'];
-                $data = $_POST['field_name'];
-                $sql = ' CREATE TABLE  ' . $module_name . '  ( <br>';
-                $fields = array();
-                foreach ($data as $key => $value):
-                    $field = "     ";
-                    $field .= $_POST['field_name'][$key] . ' ';
-                    $field .= $_POST['field_type'][$key] . '(';
-                    $field .= $_POST['field_length'] [$key] . ')' . '';
-                    array_push($fields, $field);
-                endforeach;
-                $sql .= implode($fields, ', <br>');
-                $sql .= '<br> )';
-                ?>
-                <div class="bs-docs-example">
-<pre><code data-language="php">                       
+	</code></pre>
+					</div>
+				</div>
+				<div class="span9">
+	<div class="bs-docs-example">
+	Controller
+	<pre><code data-language="php">                       
 class <?php echo ucfirst($module_name); ?>Controller extends BaseController { 
 
-protected $layout = 'layouts/manage-main';
+	protected $layout = 'layouts/manage-main';
 
-<br>
-// Default Action   
-public function getIndex() {
+	// Default Action   
+	public function getList() {
+		$<?php echo $module_name; ?> = DB::table('<?php echo $module_name; ?>s')->paginate(2);
 
-	$<?php echo $module_name; ?> = DB::table('<?php echo $module_name; ?>s')->paginate(2);
+		View::share('<?php echo $module_name; ?>s', $<?php echo $module_name; ?>);
+		$this->layout->content = View::make('<?php echo $module_name; ?>/list');
+	}
+	 
+	// Add Action
+	public function getSave($id=NULL) {
+		if($id){
+			$<?php echo $module_name; ?>=$<?php echo $module_name; ?>::find($id);
+			View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>);
+		}
+		$this->layout->content = View::make('<?php echo $module_name; ?>/add');		
+	}  
 
-	View::share('<?php echo $module_name; ?>s', $<?php echo $module_name; ?>);
-	$this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $module_name; ?>_list');
-}
-<br> 
-// Add Action
-public function getCreate() {
+	 
+	// Store ( Save add ) Action
+	public function postSave() {
+		$input = Input::get();
+		$rules = array(
+		<?php foreach ($data as $key => $value):
+			$rule=array();
+			if(isset($_POST['required'][$key]))
+				array_push($rule,'required');
+			if($_POST['input_type'][$key]=='tel' || $_POST['input_type'][$key]=='number')
+				array_push($rule,'number');
+			if($_POST['input_type'][$key]=='email')
+				array_push($rule,'email');
+			if($_POST['input_type'][$key]=='url')
+				array_push($rule,'url');
+			if($_POST['input_type'][$key]=='date')
+				array_push($rule,'date');
+			
+		?>
+		'<?php echo $_POST['field_name'][$key]; ?>' => '<?php echo implode('|',$rule);?>',
+		<?php endforeach; ?>
+	);
 
-	$this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $module_name; ?>_add');
-}  
-
-<br> 
-// Store ( Save add ) Action
-public function postStore() {
-
-    $input = Input::get();
-    $rules = array(
-    <?php foreach ($data as $key => $value): ?>
-    '<?php echo $_POST['field_name'][$key]; ?>' => 'required',
-    <?php endforeach; ?>
-    );
-
-    $validator = Validator::make($input, $rules);
-    if ($validator->passes()) {
-        $<?php echo $module_name; ?> = new <?php echo ucfirst($module_name); ?>();
-    <?php foreach ($data as $key => $value): ?>
-        $<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?> = Input::get('<?php echo $_POST['field_name'][$key]; ?>', '');                                
-    <?php endforeach; ?>
-        $<?php echo $module_name; ?>->save();
-        return Redirect::to('<?php echo $module_name; ?>');
-    } else {
-        $messages = $validator->messages();
-        return Redirect::back()->withInput()->withErrors($messages);
-    }
-}
-
-<br>
-// Show Details
-public function getShow($id) {
-if (!$id)
-return 'Error!';
-
-$<?php echo $module_name; ?> = <?php echo ucfirst($module_name); ?>::find($id);
-if (!$<?php echo $module_name; ?>)
-return 'Error!';
-$<?php echo $module_name; ?>_data = <?php echo ucfirst($module_name); ?>::find($id)->toArray();
-View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>_data);
-$this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $module_name; ?>_details');
-}
-
-<br>
-// Show Edit
-public function getEdit($id) {
-if (!$id)
-return 'Error!';
-
-$<?php echo $module_name; ?> = <?php echo ucfirst($module_name); ?>::find($id);
-if (!$<?php echo $module_name; ?>)
-return 'Error!';
-$<?php echo $module_name; ?>_data = <?php echo ucfirst($module_name); ?>::find($id)->toArray();
-View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>_data);
-$this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $module_name; ?>_edit');
-}
-
-<br>
-// Save Edit
-public function putUpdate($id) {
-	$<?php echo $module_name; ?>=<?php echo ucfirst($module_name); ?>::find($id);
+		$validator = Validator::make($input, $rules);
+		if ($validator->passes()) {
+	<?php echo "\t\t$".$module_name; ?> = new <?php echo ucfirst($module_name); ?>();
 	<?php foreach ($data as $key => $value): ?>
-	$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?> = Input::get('<?php echo $_POST['field_name'][$key]; ?>', '');                                
+	<?php echo "\t$".$module_name; ?>-><?php echo $_POST['field_name'][$key]; ?> = Input::get('<?php echo $_POST['field_name'][$key]; ?>', '');
 	<?php endforeach; ?>
-	$<?php echo $module_name; ?>->save();
-	return Redirect::to('<?php echo $module_name; ?>');
-}
+	<?php echo "\t$".$module_name; ?>->save();
+			return Redirect::to('<?php echo $module_name; ?>');
+		} else {
+			$messages = $validator->messages();
+			return Redirect::back()->withInput()->withErrors($messages);
+		}
+	}
 
-<br>
-// Delete
-public function deleteDestroy($id) {
-	return 'DELETE';
-}
+
+	// Show Details
+	public function getDetails($id) {
+		if (!$id) return 'Error!';
+		$<?php echo $module_name; ?> = <?php echo ucfirst($module_name); ?>::find($id);
+		if (!$<?php echo $module_name; ?>) return 'Error!';
+		View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>);
+		$this->layout->content = View::make('<?php echo $module_name; ?>/details');
+	}
+
+
+	// Show Edit
+	public function putSave($id) {
+		if (!$id) return 'Error!';
+		$<?php echo $module_name; ?> = <?php echo ucfirst($module_name); ?>::find($id);
+		if (!$<?php echo $module_name; ?>) return 'Error!';
+		View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>);
+		$this->layout->content = View::make('<?php echo $module_name; ?>/edit');
+	}
+
+	// Delete
+	public function deleteRemove($id) {
+		return 'DELETE';
+	}
 
 
 }
@@ -207,7 +188,6 @@ public function deleteDestroy($id) {
             <div class="span9">
                 <div class="bs-docs-example">
 <pre><code data-language="php">   
-
 @section('content') 
 @show
 </code></pre>
@@ -216,6 +196,7 @@ public function deleteDestroy($id) {
 
 <div class="span9">
 <div class="bs-docs-example">
+View: List
 <pre><code data-language="php"> 
 @section('content')
 foreach ($<?php echo $module_name; ?>s as $<?php echo $module_name; ?>): 
@@ -224,9 +205,9 @@ echo $<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?>;
 <?php endforeach; ?>       
 endforeach;
 
-// Details Link -- URL::to('<?php echo $module_name; ?>/show/'.$content->id)
-// Edit Link -- URL::to('<?php echo $module_name; ?>/edit/'.$content->id.'/edit')
-//Delete Link -- URL::to('<?php echo $module_name; ?>/'.$content->id) 
+// Details Link -- URL::to('<?php echo $module_name; ?>/details/'.$content->id)
+// Edit Link -- URL::to('<?php echo $module_name; ?>/save/'.$content->id)
+// Delete Link -- URL::to('<?php echo $module_name; ?>/remove'.$content->id) 
 
 // Print Pagination        
 echo $<?php echo $module_name; ?>s->links();
@@ -240,6 +221,7 @@ echo $<?php echo $module_name; ?>s->links();
 <!-- Add View Starts -->
 <div class="span9">
 <div class="bs-docs-example">
+View: Save/Edit
 <?php 
     $input = array( 'button',
                     'checkbox',
@@ -268,26 +250,24 @@ echo $<?php echo $module_name; ?>s->links();
 ?>    
 <pre><code data-language="php"> 
 @section('content')
-{{ Form::open(array('url' => '<?php echo $module_name; ?>/store', 'method' => 'post')) }}
-
-
+{{ Form::open(array('url' => '<?php echo $module_name; ?>/save', 'method' => isset($<?php echo $module_name; ?>)?'put':'post')) }}
 <?php foreach ($_POST['input_type'] as $key => $value): ?>
+<?php   if($value == 'text'||$value == 'tel'||$value == 'url'||$value == 'date'){ ?>  
+{{Form::<? echo $value;?>('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''))}}
+<?php } ?> 
+<?php   if($value == 'textarea'){ ?>  
+{{ Form::textarea('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''),array('class' => 'span12','cols'=>'5','rows'=>'28')) }}
+<?php } ?>
+<?php   if($value == 'select'){ ?>  
+{{Form::select('<?php echo $_POST['field_name'][$key];?>', array(0 => 'Option 1', 1 => 'Option 2', 2 => 'Option 3', 3 => 'Option 4'), Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''), array('class' => 'styled'))}}
+<?php } ?>
 @if ($errors->first('<?php echo $_POST['field_name'][$key];?>'))
 &#60;div class="alert alert-error"&#62;{{ $errors->first('<?php echo $_POST['field_name'][$key];?>') }}&#60;/div&#62;
 @endif
-<?php   if($value == 'text'){ ?>  
-{{Form::text('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>'))}}
-<?php } ?> 
-<?php   if($value == 'textarea'){ ?>  
-{{ Form::textarea('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>'),array('class' => 'span12','cols'=>'5','rows'=>'28')) }} 
-<?php } ?>
-<?php   if($value == 'select'){ ?>  
-{{Form::select('<?php echo $_POST['field_name'][$key];?>', array(0 => 'Option 1', 1 => 'Option 2', 2 => 'Option 3', 3 => 'Option 4'), Input::old('<?php echo $_POST['field_name'][$key];?>'), array('class' => 'styled'))}} 
-<?php } ?>
-
-
-
-<?php endforeach; ?>     
+<?php endforeach; ?> 
+{{Form::hidden('id',isset($<?php echo $module_name; ?>->id)?$<?php echo $module_name; ?>->id:'')}}
+{{Form::submit('Submit');}} 
+{{Form::close()}}   
 @endsection
 </code></pre>
 </div>
@@ -321,5 +301,3 @@ echo $<?php echo $module_name; ?>s->links();
 
     </body>
 </html>
-
-
