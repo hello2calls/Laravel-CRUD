@@ -11,7 +11,7 @@
         <!-- Le styles -->
         <link href="assets/css/bootstrap.css" rel="stylesheet">
         <link href="assets/css/docs.css" rel="stylesheet">
-        <link href="assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+        <link href="assets/css/tomorrow-night.css" rel="stylesheet">
         <style>
             body {
                 padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
@@ -52,24 +52,29 @@
                 <?php
                 $module_name = $_POST['module_name'];
                 $data = $_POST['field_name'];
-                $sql = ' CREATE TABLE  ' . $module_name . '  ( <br>';
-                $sql .= ' id int(11) NOT NULL, <br>'; 
+                $sql = ' CREATE TABLE  ' . $module_name . '( <br>';
+                $sql .= "\tid INT(11) NOT NULL AUTO_INCREMENT, <br>"; 
                 $fields = array();
+				$field_keys=array();
                 foreach ($data as $key => $value):
-                    $field = "     ";
+                    $field = "\t";
                     $field .= $_POST['field_name'][$key] . ' ';
-                    $field .= $_POST['field_type'][$key] . '(';
-                    $field .= $_POST['field_length'] [$key] . ')' . '';
+                    $field .= $_POST['field_type'][$key].' ';
+					if(!empty($_POST['field_length'] [$key]))
+						$field .= '('.$_POST['field_length'] [$key] . ') ';
+					$field .= (isset($_POST['field_null'] [$key]))?'NULL':'NOT NULL ';
+					$field .= ($_POST['field_default'] [$key])?'DEFULT '.$_POST['field_default'] [$key].' ':'';
+					//$field .= (isset($_POST['field_inc'] [$key]))?'AUTO_INCREMENT ':'';
                     array_push($fields, $field);
                 endforeach;
                 $sql .= implode($fields, ', <br>');
-                $sql .= ' <br> created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, <br>'; 
-                $sql .= " updated_at timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', <br>";
-                $sql .=  " PRIMARY KEY (`id`) <br>";
-                $sql .= ') ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+                $sql .= "<br>\tcreated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, <br>"; 
+                $sql .= "\tupdated_at timestamp NOT NULL DEFAULT '0000-00-00 00:00:00', <br>";
+                $sql .=  "\tPRIMARY KEY (`id`) <br>";
+                $sql .= ')ENGINE=InnoDB DEFAULT CHARSET=utf8;';
                 ?>
                 <div class="bs-docs-example">
-<pre><?php echo $sql; ?></pre>
+<pre><?php echo $sql; ?></code></pre>
                 </div>
                 
             </div>
@@ -81,7 +86,7 @@ class <?php echo ucfirst($module_name); ?> extends Eloquent {
 protected $table = '<?php echo $module_name; ?>s';
 
 }
-</pre>
+</code></pre>
                 </div>
             </div>
             <div class="span9">
@@ -101,7 +106,7 @@ protected $table = '<?php echo $module_name; ?>s';
                 $sql .= '<br> )';
                 ?>
                 <div class="bs-docs-example">
-<pre>                        
+<pre><code data-language="php">                       
 class <?php echo ucfirst($module_name); ?>Controller extends BaseController { 
 
 protected $layout = 'layouts/manage-main';
@@ -110,29 +115,21 @@ protected $layout = 'layouts/manage-main';
 // Default Action   
 public function getIndex() {
 
-if (!Auth::check())
-return Redirect::to('login')->with('message', 'Login Failed');
-$<?php echo $module_name; ?> = DB::table('<?php echo $module_name; ?>s')->paginate(2);
+	$<?php echo $module_name; ?> = DB::table('<?php echo $module_name; ?>s')->paginate(2);
 
-View::share('<?php echo $module_name; ?>s', $<?php echo $module_name; ?>);
-$this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $module_name; ?>_list');
+	View::share('<?php echo $module_name; ?>s', $<?php echo $module_name; ?>);
+	$this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $module_name; ?>_list');
 }
 <br> 
 // Add Action
 public function getCreate() {
 
-if (!Auth::check())
-return Redirect::to('login')->with('message', 'Login Failed');
-
-$this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $module_name; ?>_add');
+	$this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $module_name; ?>_add');
 }  
 
 <br> 
 // Store ( Save add ) Action
 public function postStore() {
-
-    if (!Auth::check())
-    return Redirect::to('login')->with('message', 'Login Failed');
 
     $input = Input::get();
     $rules = array(
@@ -158,8 +155,6 @@ public function postStore() {
 <br>
 // Show Details
 public function getShow($id) {
-if (!Auth::check())
-return Redirect::to('login')->with('message', 'Login Failed');
 if (!$id)
 return 'Error!';
 
@@ -174,8 +169,6 @@ $this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $mod
 <br>
 // Show Edit
 public function getEdit($id) {
-if (!Auth::check())
-return Redirect::to('login')->with('message', 'Login Failed');
 if (!$id)
 return 'Error!';
 
@@ -190,44 +183,40 @@ $this->layout->content = View::make('<?php echo $module_name; ?>/<?php echo $mod
 <br>
 // Save Edit
 public function putUpdate($id) {
-if (!Auth::check())
-return Redirect::to('login')->with('message', 'Login Failed');
-$<?php echo $module_name; ?>=<?php echo ucfirst($module_name); ?>::find($id);
-<?php foreach ($data as $key => $value): ?>
-$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?> = Input::get('<?php echo $_POST['field_name'][$key]; ?>', '');                                
-<?php endforeach; ?>
-$<?php echo $module_name; ?>->save();
-return Redirect::to('<?php echo $module_name; ?>');
+	$<?php echo $module_name; ?>=<?php echo ucfirst($module_name); ?>::find($id);
+	<?php foreach ($data as $key => $value): ?>
+	$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?> = Input::get('<?php echo $_POST['field_name'][$key]; ?>', '');                                
+	<?php endforeach; ?>
+	$<?php echo $module_name; ?>->save();
+	return Redirect::to('<?php echo $module_name; ?>');
 }
 
 <br>
 // Delete
 public function deleteDestroy($id) {
-if (!Auth::check())
-return Redirect::to('login')->with('message', 'Login Failed');
-return 'DELETE';
+	return 'DELETE';
 }
 
 
 }
-</pre>
+</code></pre>
                 </div>
             </div>
 
 
             <div class="span9">
                 <div class="bs-docs-example">
-<pre>
+<pre><code data-language="php">   
 
 @section('content') 
 @show
-</pre>
+</code></pre>
                 </div>
             </div>
 
 <div class="span9">
 <div class="bs-docs-example">
-<pre>
+<pre><code data-language="php"> 
 @section('content')
 foreach ($<?php echo $module_name; ?>s as $<?php echo $module_name; ?>): 
 <?php foreach ($data as $key => $value): ?>
@@ -243,7 +232,7 @@ endforeach;
 echo $<?php echo $module_name; ?>s->links();
 @endsection
 
-</pre>
+</code></pre>
 </div>
 </div>
 
@@ -277,7 +266,7 @@ echo $<?php echo $module_name; ?>s->links();
                     'week'
             );
 ?>    
-<pre>
+<pre><code data-language="php"> 
 @section('content')
 {{ Form::open(array('url' => '<?php echo $module_name; ?>/store', 'method' => 'post')) }}
 
@@ -300,7 +289,7 @@ echo $<?php echo $module_name; ?>s->links();
 
 <?php endforeach; ?>     
 @endsection
-</pre>
+</code></pre>
 </div>
 </div>
 <!-- Add View Ends -->
@@ -309,9 +298,9 @@ echo $<?php echo $module_name; ?>s->links();
 <!-- Edit View Starts -->
 <div class="span9">
 <div class="bs-docs-example">
-<pre>
+<pre><code data-language="php"> 
 
-</pre>
+</code></pre>
 </div>
 </div>
 <!-- Edit View Ends -->
@@ -320,6 +309,8 @@ echo $<?php echo $module_name; ?>s->links();
         </div> <!-- /container -->
 
         <script src="assets/js/jquery.js"></script>
+		<script src="assets/js/rainbow-custom.min.js"></script>
+		
         <script type="text/javascript">
             function add_more(){
                 $("#tbl").append($("#scratch").clone());
