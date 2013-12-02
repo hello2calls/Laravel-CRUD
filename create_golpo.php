@@ -100,11 +100,11 @@ class <?php echo ucfirst($module_name); ?>Controller extends BaseController {
 	protected $layout = 'layouts/manage-main';
 
 	// Default Action   
-	public function getList() {
+	public function getIndex() {
 		$<?php echo $module_name; ?> = DB::table('<?php echo $module_name; ?>s')->paginate(2);
 
 		View::share('<?php echo $module_name; ?>s', $<?php echo $module_name; ?>);
-		$this->layout->content = View::make('<?php echo $module_name; ?>/list');
+		$this->layout->content = View::make('<?php echo $module_name; ?>/index');
 	}
 	 
 	// Add Action
@@ -146,7 +146,7 @@ class <?php echo ucfirst($module_name); ?>Controller extends BaseController {
 	<?php echo "\t$".$module_name; ?>-><?php echo $_POST['field_name'][$key]; ?> = Input::get('<?php echo $_POST['field_name'][$key]; ?>', '');
 	<?php endforeach; ?>
 	<?php echo "\t$".$module_name; ?>->save();
-			return Redirect::to('<?php echo $module_name; ?>');
+			return Redirect::to('<?php echo str_replace('_','-',$module_name); ?>');
 		} else {
 			$messages = $validator->messages();
 			return Redirect::back()->withInput()->withErrors($messages);
@@ -199,20 +199,39 @@ class <?php echo ucfirst($module_name); ?>Controller extends BaseController {
 View: List
 <pre><code data-language="php"> 
 @section('content')
-foreach ($<?php echo $module_name; ?>s as $<?php echo $module_name; ?>): 
-<?php foreach ($data as $key => $value): ?>
-echo $<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?>;                                
-<?php endforeach; ?>       
-endforeach;
-
-// Details Link -- URL::to('<?php echo $module_name; ?>/details/'.$content->id)
-// Edit Link -- URL::to('<?php echo $module_name; ?>/save/'.$content->id)
-// Delete Link -- URL::to('<?php echo $module_name; ?>/remove'.$content->id) 
-
-// Print Pagination        
-echo $<?php echo $module_name; ?>s->links();
+@section('title')
+School Automation
 @endsection
+@section('style')
+@endsection
+@section('script')
+@endsection
+@section('content')
+<section class="vbox">
+    <header class="header bg-white b-b">
+        <p><?php echo $module_name; ?></p>
+    </header>
+    <section class="scrollable wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+		@foreach ($<?php echo $module_name; ?>s as $<?php echo $module_name; ?>): 
+		<?php foreach ($data as $key => $value): ?>
+		@echo $<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?>;                                
+		<?php endforeach; ?>       
+		@endforeach;
 
+		// Details Link -- URL::to('<?php echo $module_name; ?>/details/'.$content->id)
+		// Edit Link -- URL::to('<?php echo $module_name; ?>/save/'.$content->id)
+		// Delete Link -- URL::to('<?php echo $module_name; ?>/remove'.$content->id) 
+
+		// Print Pagination        
+		{{$<?php echo $module_name; ?>s->links();}}
+		@endsection
+        </div>
+    </div>
+    </section>
+</section>
+@endsection
 </code></pre>
 </div>
 </div>
@@ -250,7 +269,7 @@ View: Save/Edit
 ?>    
 <pre><code data-language="php"> 
 @section('content')
-{{ Form::open(array('url' => '<?php echo $module_name; ?>/save', 'method' => isset($<?php echo $module_name; ?>)?'put':'post')) }}
+{{ Form::open(array('url' => '<?php echo str_replace('_','-',$module_name); ?>/save', 'method' => isset($<?php echo $module_name; ?>)?'put':'post')) }}
 <?php foreach ($_POST['input_type'] as $key => $value): ?>
 <?php   if($value == 'text'||$value == 'tel'||$value == 'url'||$value == 'date'){ ?>  
 {{Form::<? echo $value;?>('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''))}}
