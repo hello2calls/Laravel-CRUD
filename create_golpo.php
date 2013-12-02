@@ -95,23 +95,23 @@ class <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name)));
 	<div class="bs-docs-example">
 	Controller
 	<pre><code data-language="php">                       
-class <?php echo ucfirst($module_name); ?>Controller extends BaseController { 
+class <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>Controller extends BaseController { 
 
 	protected $layout = 'layouts/console';
-    protected $layout_ajax = 'layouts/console_ajax';
+	protected $layout_ajax = 'layouts/console_ajax';
 
 	// Default Action   
 	public function getIndex() {
-		$<?php echo $module_name; ?> = DB::table('<?php echo $module_name; ?>s')->paginate(2);
+		$<?php echo $module_name; ?>s = <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>->paginate(2);
 
-		View::share('<?php echo $module_name; ?>s', $<?php echo $module_name; ?>);
+		View::share('<?php echo $module_name; ?>s', $<?php echo $module_name; ?>s);
 		$this->layout->content = View::make('<?php echo $module_name; ?>/index');
 	}
 	 
 	// Add Action
 	public function getSave($id=NULL) {
 		if($id){
-			$<?php echo $module_name; ?>=<?php echo ucfirst($module_name); ?>::find($id);
+			$<?php echo $module_name; ?>=<?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>::find($id);
 			View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>);
 		}
 		$this->layout->content = View::make('<?php echo $module_name; ?>/add');		
@@ -142,7 +142,7 @@ class <?php echo ucfirst($module_name); ?>Controller extends BaseController {
 
 		$validator = Validator::make($input, $rules);
 		if ($validator->passes()) {
-	<?php echo "\t\t$".$module_name; ?> = new <?php echo ucfirst($module_name); ?>();
+	<?php echo "\t\t$".$module_name; ?> = new <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>();
 	<?php foreach ($data as $key => $value): ?>
 	<?php echo "\t$".$module_name; ?>-><?php echo $_POST['field_name'][$key]; ?> = Input::get('<?php echo $_POST['field_name'][$key]; ?>', '');
 	<?php endforeach; ?>
@@ -158,7 +158,7 @@ class <?php echo ucfirst($module_name); ?>Controller extends BaseController {
 	// Show Details
 	public function getDetails($id) {
 		if (!$id) return 'Error!';
-		$<?php echo $module_name; ?> = <?php echo ucfirst($module_name); ?>::find($id);
+		$<?php echo $module_name; ?> = <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>::find($id);
 		if (!$<?php echo $module_name; ?>) return 'Error!';
 		View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>);
 		$this->layout->content = View::make('<?php echo $module_name; ?>/details');
@@ -168,7 +168,7 @@ class <?php echo ucfirst($module_name); ?>Controller extends BaseController {
 	// Show Edit
 	public function putSave($id) {
 		if (!$id) return 'Error!';
-		$<?php echo $module_name; ?> = <?php echo ucfirst($module_name); ?>::find($id);
+		$<?php echo $module_name; ?> = <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>::find($id);
 		if (!$<?php echo $module_name; ?>) return 'Error!';
 		View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>);
 		$this->layout->content = View::make('<?php echo $module_name; ?>/edit');
@@ -177,7 +177,7 @@ class <?php echo ucfirst($module_name); ?>Controller extends BaseController {
 	// Delete
 	public function deleteRemove() {
 		$id = Input::get('id');
-		$<?php echo $module_name; ?>=<?php echo ucfirst($module_name); ?>::find($id);
+		$<?php echo $module_name; ?>=<?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>::find($id);
 		$<?php echo $module_name; ?>->delete();
 	}
 
