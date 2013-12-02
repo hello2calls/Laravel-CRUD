@@ -83,7 +83,7 @@
                 <div class="bs-docs-example">
 				Model
 <pre><code data-language="php">
-class <?php echo ucfirst($module_name); ?> extends Eloquent {
+class <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?> extends Eloquent {
 
 	protected $table = '<?php echo $module_name; ?>s';
 
@@ -97,7 +97,8 @@ class <?php echo ucfirst($module_name); ?> extends Eloquent {
 	<pre><code data-language="php">                       
 class <?php echo ucfirst($module_name); ?>Controller extends BaseController { 
 
-	protected $layout = 'layouts/manage-main';
+	protected $layout = 'layouts/console';
+    protected $layout_ajax = 'layouts/console_ajax';
 
 	// Default Action   
 	public function getIndex() {
@@ -110,7 +111,7 @@ class <?php echo ucfirst($module_name); ?>Controller extends BaseController {
 	// Add Action
 	public function getSave($id=NULL) {
 		if($id){
-			$<?php echo $module_name; ?>=$<?php echo $module_name; ?>::find($id);
+			$<?php echo $module_name; ?>=<?php echo ucfirst($module_name); ?>::find($id);
 			View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>);
 		}
 		$this->layout->content = View::make('<?php echo $module_name; ?>/add');		
@@ -174,8 +175,10 @@ class <?php echo ucfirst($module_name); ?>Controller extends BaseController {
 	}
 
 	// Delete
-	public function deleteRemove($id) {
-		return 'DELETE';
+	public function deleteRemove() {
+		$id = Input::get('id');
+		$<?php echo $module_name; ?>=<?php echo ucfirst($module_name); ?>::find($id);
+		$<?php echo $module_name; ?>->delete();
 	}
 
 
@@ -268,26 +271,46 @@ View: Save/Edit
             );
 ?>    
 <pre><code data-language="php"> 
-@section('content')
-{{ Form::open(array('url' => '<?php echo str_replace('_','-',$module_name); ?>/save', 'method' => isset($<?php echo $module_name; ?>)?'put':'post')) }}
-<?php foreach ($_POST['input_type'] as $key => $value): ?>
-<?php   if($value == 'text'||$value == 'tel'||$value == 'url'||$value == 'date'){ ?>  
-{{Form::<? echo $value;?>('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''))}}
-<?php } ?> 
-<?php   if($value == 'textarea'){ ?>  
-{{ Form::textarea('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''),array('class' => 'span12','cols'=>'5','rows'=>'28')) }}
-<?php } ?>
-<?php   if($value == 'select'){ ?>  
-{{Form::select('<?php echo $_POST['field_name'][$key];?>', array(0 => 'Option 1', 1 => 'Option 2', 2 => 'Option 3', 3 => 'Option 4'), Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''), array('class' => 'styled'))}}
-<?php } ?>
-@if ($errors->first('<?php echo $_POST['field_name'][$key];?>'))
-&#60;div class="alert alert-error"&#62;{{ $errors->first('<?php echo $_POST['field_name'][$key];?>') }}&#60;/div&#62;
-@endif
-<?php endforeach; ?> 
-{{Form::hidden('id',isset($<?php echo $module_name; ?>->id)?$<?php echo $module_name; ?>->id:'')}}
-{{Form::submit('Submit');}} 
-{{Form::close()}}   
+@section('title')
+School Automation
 @endsection
+@section('style')
+<style type="text/css">
+</style>
+@endsection
+@section('script')
+@endsection
+@section('content')
+<section class="vbox">
+    <header class="header bg-white b-b">
+        <p>Dashboard</p>
+    </header>
+    <section class="scrollable wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+		{{ Form::open(array('url' => '<?php echo str_replace('_','-',$module_name); ?>/save', 'method' => isset($<?php echo $module_name; ?>)?'put':'post')) }}
+		<?php foreach ($_POST['input_type'] as $key => $value): ?>
+		<?php   if($value == 'text'||$value == 'tel'||$value == 'url'||$value == 'date'){ ?>  
+		{{Form::<? echo $value;?>('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''))}}
+		<?php } ?> 
+		<?php   if($value == 'textarea'){ ?>  
+		{{ Form::textarea('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''),array('class' => 'span12','cols'=>'5','rows'=>'28')) }}
+		<?php } ?>
+		<?php   if($value == 'select'){ ?>  
+		{{Form::select('<?php echo $_POST['field_name'][$key];?>', array(0 => 'Option 1', 1 => 'Option 2', 2 => 'Option 3', 3 => 'Option 4'), Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''), array('class' => 'styled'))}}
+		<?php } ?>
+		@if ($errors->first('<?php echo $_POST['field_name'][$key];?>'))
+		&#60;div class="alert alert-error"&#62;{{ $errors->first('<?php echo $_POST['field_name'][$key];?>') }}&#60;/div&#62;
+		@endif
+		<?php endforeach; ?> 
+		{{Form::hidden('id',isset($<?php echo $module_name; ?>->id)?$<?php echo $module_name; ?>->id:'')}}
+		{{Form::submit('Submit');}} 
+		{{Form::close()}} 
+        </div>
+    </div>
+    </section>
+</section>
+@endsection	  
 </code></pre>
 </div>
 </div>
