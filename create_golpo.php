@@ -102,8 +102,7 @@ class <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name)));
 
 	// Default Action   
 	public function getIndex() {
-		$<?php echo $module_name; ?>s = <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>->paginate(2);
-
+		$<?php echo $module_name; ?>s = <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>::paginate(10);
 		View::share('<?php echo $module_name; ?>s', $<?php echo $module_name; ?>s);
 		$this->layout->content = View::make('<?php echo $module_name; ?>/index');
 	}
@@ -115,8 +114,7 @@ class <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name)));
 			View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>);
 		}
 		$this->layout->content = View::make('<?php echo $module_name; ?>/add');		
-	}  
-
+	}
 	 
 	// Store ( Save add ) Action
 	public function postSave() {
@@ -154,7 +152,6 @@ class <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name)));
 		}
 	}
 
-
 	// Show Details
 	public function getDetails($id) {
 		if (!$id) return 'Error!';
@@ -163,7 +160,6 @@ class <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name)));
 		View::share('<?php echo $module_name; ?>', $<?php echo $module_name; ?>);
 		$this->layout->content = View::make('<?php echo $module_name; ?>/details');
 	}
-
 
 	// Show Edit
 	public function putSave($id) {
@@ -217,10 +213,10 @@ School Automation
     <section class="scrollable wrapper">
     <div class="row">
         <div class="col-lg-12">
-		@foreach ($<?php echo $module_name; ?>s as $<?php echo $module_name; ?>): 
+		@foreach ($<?php echo $module_name; ?>s as $<?php echo $module_name; ?>):
 		<?php foreach ($data as $key => $value): ?>
-		@echo $<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?>;                                
-		<?php endforeach; ?>       
+		@echo $<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?>;
+		<?php endforeach; ?>
 		@endforeach;
 
 		// Details Link -- URL::to('<?php echo $module_name; ?>/details/'.$content->id)
@@ -288,21 +284,26 @@ School Automation
     <section class="scrollable wrapper">
     <div class="row">
         <div class="col-lg-12">
-		{{ Form::open(array('url' => '<?php echo str_replace('_','-',$module_name); ?>/save', 'method' => isset($<?php echo $module_name; ?>)?'put':'post')) }}
+		{{Form::open(array('url' => '<?php echo str_replace('_','-',$module_name); ?>/save', 'method' => isset($<?php echo $module_name; ?>)?'put':'post'))}}
 		<?php foreach ($_POST['input_type'] as $key => $value): ?>
-		<?php   if($value == 'text'||$value == 'tel'||$value == 'url'||$value == 'date'){ ?>  
+		<?php if($value == 'text'||$value == 'tel'||$value == 'url'||$value == 'date'){ ?>  
+		{{Form::label('<?php echo $_POST['field_name'][$key];?>','<?php echo $_POST['field_name'][$key];?>')}}
 		{{Form::<? echo $value;?>('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''))}}
 		<?php } ?> 
 		<?php   if($value == 'textarea'){ ?>  
-		{{ Form::textarea('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''),array('class' => 'span12','cols'=>'5','rows'=>'28')) }}
+		{{Form::label('<?php echo $_POST['field_name'][$key];?>','<?php echo $_POST['field_name'][$key];?>')}}
+		{{Form::textarea('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''),array('class' => 'span12','cols'=>'5','rows'=>'28'))}}
 		<?php } ?>
-		<?php   if($value == 'select'){ ?>  
+		<?php if($value == 'select'){ ?>  
+		{{Form::label('<?php echo $_POST['field_name'][$key];?>','<?php echo $_POST['field_name'][$key];?>')}}
 		{{Form::select('<?php echo $_POST['field_name'][$key];?>', array(0 => 'Option 1', 1 => 'Option 2', 2 => 'Option 3', 3 => 'Option 4'), Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''), array('class' => 'styled'))}}
 		<?php } ?>
+
 		@if ($errors->first('<?php echo $_POST['field_name'][$key];?>'))
 		&#60;div class="alert alert-error"&#62;{{ $errors->first('<?php echo $_POST['field_name'][$key];?>') }}&#60;/div&#62;
 		@endif
-		<?php endforeach; ?> 
+		<?php endforeach; ?>
+		
 		{{Form::hidden('id',isset($<?php echo $module_name; ?>->id)?$<?php echo $module_name; ?>->id:'')}}
 		{{Form::submit('Submit');}} 
 		{{Form::close()}} 
