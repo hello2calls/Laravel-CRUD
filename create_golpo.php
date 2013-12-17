@@ -175,6 +175,7 @@ class <?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name)));
 		$id = Input::get('id');
 		$<?php echo $module_name; ?>=<?php echo str_replace(' ','',ucwords(str_replace('_',' ',$module_name))); ?>::find($id);
 		$<?php echo $module_name; ?>->delete();
+		return Response::json(array('code'=>200,'message'=>'Successfully Deleted.'));
 	}
 
 
@@ -213,12 +214,28 @@ School Automation
     <section class="scrollable wrapper">
     <div class="row">
         <div class="col-lg-12">
-		@foreach ($<?php echo $module_name; ?>s as $<?php echo $module_name; ?>):
+		<table class="table table-striped b-t text-sm">
+		<thead>
+		<tr>
+		  
 		<?php foreach ($data as $key => $value): ?>
-		@echo $<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?>;
+		<?php echo '<th>'.$_POST['field_name'][$key].'</th>';?>
 		<?php endforeach; ?>
-		@endforeach;
+			
+		</tr>
+		</thead>
+		<tbody>
+		@foreach ($<?php echo $module_name; ?>s as $<?php echo $module_name; ?>)
+		<?php foreach ($data as $key => $value): ?>
+		<tr>
+		<td>{{$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key]; ?>;}}</td>
+		</tr>
+		<?php endforeach; ?>
+		@endforeach
+		</tbody>
+		</table>
 
+		{{HTML::link('<?php echo $module_name; ?>/save/','Add New')}}
 		// Details Link -- URL::to('<?php echo $module_name; ?>/details/'.$content->id)
 		// Edit Link -- URL::to('<?php echo $module_name; ?>/save/'.$content->id)
 		// Delete Link -- URL::to('<?php echo $module_name; ?>/remove'.$content->id) 
@@ -286,7 +303,7 @@ School Automation
         <div class="col-lg-12">
 		{{Form::open(array('url' => '<?php echo str_replace('_','-',$module_name); ?>/save', 'method' => isset($<?php echo $module_name; ?>)?'put':'post'))}}
 		<?php foreach ($_POST['input_type'] as $key => $value): ?>
-		<?php if($value == 'text'||$value == 'tel'||$value == 'url'||$value == 'date'){ ?>  
+		<?php if($value == 'text'||$value == 'checkbox'||$value == 'email'||$value == 'tel'||$value == 'url'||$value == 'date'){ ?>  
 		{{Form::label('<?php echo $_POST['field_name'][$key];?>','<?php echo $_POST['field_name'][$key];?>')}}
 		{{Form::<? echo $value;?>('<?php echo $_POST['field_name'][$key];?>', Input::old('<?php echo $_POST['field_name'][$key];?>',isset($<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>)?$<?php echo $module_name; ?>-><?php echo $_POST['field_name'][$key];?>:''))}}
 		<?php } ?> 
